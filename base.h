@@ -113,8 +113,6 @@
 //
 **********************************************************************************/
 
-namespace evx {
-
 #if defined (EVX_PLATFORM_WINDOWS)
     typedef INT64 int64;		  
     typedef INT32 int32;		    
@@ -151,15 +149,13 @@ typedef float float32;
 typedef double float64;           
 typedef wchar_t wchar;
 
-} // namespace evx
-
 /**********************************************************************************
 //
 // Status codes
 //
 **********************************************************************************/
 
-namespace evx { typedef uint8 evx_status; }
+typedef uint8 evx_status;
 
 #define EVX_SUCCESS                                 (0)
 #define EVX_ERROR_INVALIDARG                        (1)
@@ -206,7 +202,6 @@ namespace evx { typedef uint8 evx_status; }
 #define EVX_ERROR_CREATE_STRING(x) ((char *) #x)
 #define evx_post_error(x) post_error_i(x, EVX_ERROR_CREATE_STRING(x), __EVX_FUNCTION__, (char *) __FILE__, __LINE__)
 
-namespace evx {
 
 inline uint32 post_error_i(uint8 error, const char *error_string, const char *function, const char *filename, uint32 line) 
 {
@@ -225,7 +220,6 @@ inline uint32 post_error_i(uint8 error, const char *error_string, const char *fu
     return error;
 }
 
-} // namespace evx
 
 /**********************************************************************************
 //
@@ -233,8 +227,5 @@ inline uint32 post_error_i(uint8 error, const char *error_string, const char *fu
 //
 **********************************************************************************/
 
-#define EVX_DISABLE_COPY_AND_ASSIGN(type) \
-    type(const type &rvalue); \
-    type &operator = (const type &rvalue);
 
 #endif // __EV_BASE_H__

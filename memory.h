@@ -37,12 +37,10 @@
 
 #include "base.h"
 
-namespace evx {
 
 uint32 aligned_bit_copy(uint8 *dest, uint32 dest_bit_offset, uint8 *source, uint32 source_bit_offset, uint32 copy_bit_count);
 
 uint32 unaligned_bit_copy(uint8 *dest, uint32 dest_offset, uint8 *source, uint32 source_offset, uint32 copy_bit_count);
 
-} // namespace evx
 
 #endif // __EV_MEMORY_H__

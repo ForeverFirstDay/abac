@@ -35,7 +35,7 @@
 #ifndef __EV_CABAC_H__
 #define __EV_CABAC_H__
 
-#include "bitstream.h"
+#include "bitstream_cabac.h"
  
 /*
 // Entropy Stream Interface
@@ -56,50 +56,47 @@
 //     Decode(). This process allows the coder to properly initialize, flush, and reset itself.
 */
 
-namespace evx {
+#define EVX_KB                  ((uint32) 1024)
+#define EVX_MB                  (EVX_KB * EVX_KB)
+#define EVX_GB                  (EVX_MB * EVX_KB)
 
-class entropy_coder 
+
+typedef struct
 {
-    bool adaptive;
-    uint32 e3_count;
-    uint32 history[2];
-    uint32 value;
+  uint8 adaptive;
+  uint32 e3_count;
+  uint32 history[2];
+  uint32 value;
 
-    uint32 model;
-    uint32 low;
-    uint32 high;
-    uint32 mid;
+  uint32 model;
+  uint32 low;
+  uint32 high;
+  uint32 mid;
+} entropy_coder_t;
 
-private:
 
-    void resolve_model();
+void entropy_coder_resolve_model(entropy_coder_t* coder);
 
-    evx_status flush_encoder(bitstream *dest);
-    evx_status flush_inverse_bits(uint8 value, bitstream *dest);
+evx_status entropy_coder_flush_encoder(entropy_coder_t* coder, bitstream_t *dest);
+evx_status entropy_coder_flush_inverse_bits(entropy_coder_t* coder, uint8 value, bitstream_t *dest);
 
-    evx_status encode_symbol(uint8 value);
-    evx_status decode_symbol(uint32 value, bitstream *dest);
+evx_status entropy_coder_encode_symbol(entropy_coder_t* coder, uint8 value);
+evx_status entropy_coder_decode_symbol(entropy_coder_t* coder, uint32 value, bitstream_t *dest);
 
-    evx_status resolve_encode_scaling(bitstream *dest);
-    evx_status resolve_decode_scaling(uint32 *value, bitstream *source, bitstream *dest);
+evx_status entropy_coder_resolve_encode_scaling(entropy_coder_t* coder, bitstream_t *dest);
+evx_status entropy_coder_resolve_decode_scaling(entropy_coder_t* coder, uint32 *value, bitstream_t *source, bitstream_t *dest);
 
-public:
 
-    entropy_coder();
-    explicit entropy_coder(uint32 input_model);
-    void clear();
+void entropy_coder_init1(entropy_coder_t* coder);
+void entropy_coder_init2(entropy_coder_t* coder, uint32 input_model);
+void entropy_coder_clear(entropy_coder_t* coder);
 
-    evx_status encode(bitstream *source, bitstream *dest, bool auto_finish=true);
-    evx_status decode(uint32 symbol_count, bitstream *source, bitstream *dest, bool auto_start=true);
+evx_status entropy_coder_encode(entropy_coder_t* coder, bitstream_t *source, bitstream_t* dest);
+evx_status entropy_coder_decode(entropy_coder_t* coder, uint32 symbol_count, bitstream_t *source, bitstream_t *dest);
 
-    evx_status start_decode(bitstream *source);
-    evx_status finish_encode(bitstream *dest);
+evx_status entropy_coder_start_decode(entropy_coder_t* coder, bitstream_t *source);
+evx_status entropy_coder_finish_encode(entropy_coder_t* coder, bitstream_t *dest);
 
-private:
 
-    EVX_DISABLE_COPY_AND_ASSIGN(entropy_coder);
-};
-
-} // namespace EVX
 
 #endif // __EVX_CABAC_H__

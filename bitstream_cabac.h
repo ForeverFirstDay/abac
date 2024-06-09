@@ -36,59 +36,54 @@
 #define __EVX_BIT_STREAM_H__	
 
 #include "base.h"
+#include "memory.h"
+#include "evx_math.h"
 
 #define EVX_READ_BIT(source, bit)           (((source) >> (bit)) & 0x1)
 #define EVX_WRITE_BIT(dest, bit, value)     (dest) = (((dest) & ~(0x1 << (bit))) | \
                                             (((value) & 0x1) << (bit)))
-namespace evx {
 
-class bitstream 
+typedef struct
 {
-    uint32 read_index;
-    uint32 write_index;
-    uint32 data_capacity;
-    uint8 *data_store;
+  uint32 read_index;
+  uint32 write_index;
+  uint32 data_capacity;
+  uint8* data_store;
+} bitstream_t;
 
-public:
+void bitstream_create1(bitstream_t* bs);
+void bitstream_create2(bitstream_t* bs, uint32 size);
+int bitstream_create3(bitstream_t* bs, uint8* source, uint32 size);
+void bitstream_create4(bitstream_t* bs, void *bytes, uint32 size);
+//virtual ~bitstream();
 
-    bitstream();
-    bitstream(uint32 size);
-    bitstream(void *bytes, uint32 size);
-    virtual ~bitstream();
+const uint8 * bitstream_query_data(const bitstream_t* bs);
+const uint32 bitstream_query_capacity(const bitstream_t* bs);
+const uint32 bitstream_query_occupancy(const bitstream_t* bs);
+const uint32 bitstream_query_byte_occupancy(const bitstream_t* bs);
+uint32 bitstream_resize_capacity(bitstream_t* bs, uint32 size_in_bits);
 
-    uint8 *query_data() const;
-    uint32 query_capacity() const;
-    uint32 query_occupancy() const;
-    uint32 query_byte_occupancy() const;
-    uint32 resize_capacity(uint32 size_in_bits);
+/* seek will only adjust the read index. there is purposely 
+    no way to adjust the write index. */
+evx_status bitstream_seek(bitstream_t* bs, uint32 bit_offset);
+evx_status bitstream_assign1(bitstream_t* bs, const bitstream_t* rvalue);
+evx_status bitstream_assign2(bitstream_t* bs, void *bytes, uint32 size);
 
-    /* seek will only adjust the read index. there is purposely 
-       no way to adjust the write index. */
-    evx_status seek(uint32 bit_offset);
-    evx_status assign(const bitstream &rvalue);
-    evx_status assign(void *bytes, uint32 size);
+void bitstream_clear(bitstream_t* bs);
+void bitstream_empty(bitstream_t* bs);
 
-    void clear();   
-    void empty();  
+const uint8 bitstream_is_empty(const bitstream_t* bs) ;
+const uint8 bitstream_is_full(const bitstream_t* bs);
 
-    bool is_empty() const;
-    bool is_full() const;
+evx_status bitstream_write_byte(bitstream_t* bs, uint8 value);
+evx_status bitstream_write_bit(bitstream_t* bs, uint8 value);
+evx_status bitstream_write_bytes(bitstream_t* bs, void *data, uint32 byte_count);
+evx_status bitstream_write_bits(bitstream_t* bs, void *data, uint32 bit_count);
 
-    evx_status write_byte(uint8 value);
-    evx_status write_bit(uint8 value);
-    evx_status write_bytes(void *data, uint32 byte_count);
-    evx_status write_bits(void *data, uint32 bit_count);
+evx_status bitstream_read_byte(bitstream_t* bs, void *data);
+evx_status bitstream_read_bit(bitstream_t* bs, void *data);
+evx_status bitstream_read_bytes(bitstream_t* bs, void *data, uint32 *byte_count);
+evx_status bitstream_read_bits(bitstream_t* bs, void *data, uint32 *bit_count);
 
-    evx_status read_byte(void *data);
-    evx_status read_bit(void *data);
-    evx_status read_bytes(void *data, uint32 *byte_count);
-    evx_status read_bits(void *data, uint32 *bit_count);
-
-private:
-  
-    EVX_DISABLE_COPY_AND_ASSIGN(bitstream);
-};
-
-} // namespace EVX
-
+ 
 #endif // __EVX_BIT_STREAM_H__

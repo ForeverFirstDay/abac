@@ -32,8 +32,8 @@
 //
 */
 
-#ifndef __EV_MATH_H__
-#define __EV_MATH_H__
+#ifndef __EVX_MATH_H__
+#define __EVX_MATH_H__
 
 #include "base.h"
 
@@ -61,98 +61,77 @@
 #define evx_min3( a, b, c )     ((c) < (a) ? ((c) < (b) ? (c) : (b)) : (a) < (b) ? (a) : (b))
 #define evx_max3( a, b, c )     ((c) > (a) ? ((c) > (b) ? (c) : (b)) : (a) > (b) ? (a) : (b))
 
-namespace evx {
 
-const uint8 log2_byte_lut[] = {
-    0, 0, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3,
-    4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
-    5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
-    5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
-    6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6,
-    6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6,
-    6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6,
-    6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6,
-    7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7,
-    7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7,
-    7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7,
-    7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7,
-    7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7,
-    7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7,
-    7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7,
-    7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7,
-};
-
-inline uint8 log2(uint8 value) 
+extern const uint8 log2_byte_lut[];
+inline uint8 log2_8(uint8 value)
 {
-    return log2_byte_lut[value];
+  return log2_byte_lut[value];
 }
 
-inline uint8 log2(uint16 value) 
+inline uint8 log2_16(uint16 value)
 {
-    if (value <= 0xFF) 
-    {
-        return log2((uint8) value);
-    }
+  if (value <= 0xFF)
+  {
+    return log2_8((uint8)value);
+  }
 
-    return 8 + log2((uint8) (value >> 8));
+  return 8 + log2_8((uint8)(value >> 8));
 }
 
-inline uint8 log2(uint32 value) 
+inline uint8 log2_32(uint32 value)
 {
-    if (value <= 0xFFFF) 
-    {
-        return log2((uint16) value);
-    }
+  if (value <= 0xFFFF)
+  {
+    return log2_16((uint16)value);
+  }
 
-    return 16 + log2((uint16) (value >> 16));
+  return 16 + log2_16((uint16)(value >> 16));
 }
 
-inline int8 abs(int8 value) 
+inline int8 abs8(int8 value)
 {
-    if (value == EVX_MIN_INT8)
-        return EVX_MAX_INT8;
+  if (value == EVX_MIN_INT8)
+    return EVX_MAX_INT8;
 
-    return (value < 0 ? -value : value);
+  return (value < 0 ? -value : value);
 }
 
-inline int16 abs(int16 value) 
+inline int16 abs16(int16 value)
 {
-    if (value == EVX_MIN_INT16)
-        return EVX_MAX_INT16;
+  if (value == EVX_MIN_INT16)
+    return EVX_MAX_INT16;
 
-    return (value < 0 ? -value : value);
+  return (value < 0 ? -value : value);
 }
 
-inline int32 abs(int32 value) 
+inline int32 abs32(int32 value)
 {
-    if (value == EVX_MIN_INT32)
-        return EVX_MAX_INT32;
+  if (value == EVX_MIN_INT32)
+    return EVX_MAX_INT32;
 
-    return (value < 0 ? -value : value);
+  return (value < 0 ? -value : value);
 }
 
-inline int16 clip_range(int16 value, int16 min, int16 max) 
+inline int16 clip_range(int16 value, int16 min, int16 max)
 {
-    return (value < min ? min : (value > max ? max : value));
+  return (value < min ? min : (value > max ? max : value));
 }
 
-inline uint32 greater_multiple(uint32 value, uint32 multiple) 
+inline uint32 greater_multiple(uint32 value, uint32 multiple)
 {
-    uint32 mod = value % multiple;
+  uint32 mod = value % multiple;
 
-    if (0 != mod) 
-    {
-        value += multiple - mod;
-    }
+  if (0 != mod)
+  {
+    value += multiple - mod;
+  }
 
-    return value;
+  return value;
 }
 
-inline uint32 align(uint32 value, uint32 alignment) 
+inline uint32 align(uint32 value, uint32 alignment)
 {
-    return greater_multiple(value, alignment);
-}   
-
-} // namespace evx
+  return greater_multiple(value, alignment);
+}
 
 #endif // __EV_MATH_H__
