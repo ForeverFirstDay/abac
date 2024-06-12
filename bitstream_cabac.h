@@ -43,18 +43,18 @@
 #define EVX_WRITE_BIT(dest, bit, value)     (dest) = (((dest) & ~(0x1 << (bit))) | \
                                             (((value) & 0x1) << (bit)))
 
-typedef struct
+typedef struct 
 {
   uint32 read_index;
   uint32 write_index;
   uint32 data_capacity;
   uint8* data_store;
-} bitstream_t;
+}bitstream_t, *bitstream_p;
 
-void bitstream_create1(bitstream_t* bs);
-void bitstream_create2(bitstream_t* bs, uint32 size);
-int bitstream_create3(bitstream_t* bs, uint8* source, uint32 size);
-void bitstream_create4(bitstream_t* bs, void *bytes, uint32 size);
+void bitstream_create_init(bitstream_t* bs);
+void bitstream_create_new(bitstream_t* bs, uint32 size);
+int bitstream_create_refer(bitstream_t* bs, uint8* source, uint32 size, BOOL flag);
+void bitstream_create_assign(bitstream_t* bs, void *bytes, uint32 size);
 //virtual ~bitstream();
 
 const uint8 * bitstream_query_data(const bitstream_t* bs);

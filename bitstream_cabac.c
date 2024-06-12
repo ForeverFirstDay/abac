@@ -2,7 +2,7 @@
 #include "bitstream_cabac.h"
 
 
-void bitstream_create1(bitstream_t* bs)
+void bitstream_create_init(bitstream_t* bs)
 {
   bs->read_index = 0;
   bs->write_index = 0;
@@ -10,7 +10,7 @@ void bitstream_create1(bitstream_t* bs)
   bs->data_capacity = 0;
 }
 
-void bitstream_create2(bitstream_t* bs, uint32 size)
+void bitstream_create_new(bitstream_t* bs, uint32 size)
 {
   bs->data_store = 0;
 
@@ -20,7 +20,7 @@ void bitstream_create2(bitstream_t* bs, uint32 size)
   }
 }
 
-int bitstream_create3(bitstream_t* bs, uint8* source, uint32 size)
+int bitstream_create_refer(bitstream_t* bs, uint8* source, uint32 size, BOOL flag)
 {
   bs->data_store = 0;
 
@@ -34,12 +34,18 @@ int bitstream_create3(bitstream_t* bs, uint8* source, uint32 size)
     evx_post_error(EVX_ERROR_EXECUTION_FAILURE);
     return 0;
   }
-
+  bs->read_index = 0;
+  if (flag) {
+    bs->write_index = size << 3;
+  }
+  else {
+    bs->write_index = 0;
+  }
   bs->data_capacity = byte_size;
   return byte_size << 3;
 }
 
-void bitstream_create4(bitstream_t* bs, void *bytes, uint32 size)
+void bitstream_create_assign(bitstream_t* bs, void *bytes, uint32 size)
 {
   bs->data_store = 0;
 
